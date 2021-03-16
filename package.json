@@ -1,0 +1,19 @@
+{
+  "name": "browser-serial",
+  "version": "1.0.0",
+  "description": "API for communicating with serial ports in the browser. ",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sbooeshaghi/browser-serial.git"
+  },
+  "author": "A. Sina Booeshaghi",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/sbooeshaghi/browser-serial/issues"
+  },
+  "homepage": "https://github.com/sbooeshaghi/browser-serial#readme"
+}
