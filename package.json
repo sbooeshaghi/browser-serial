@@ -1,6 +1,6 @@
 {
   "name": "browser-serial",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "API for communicating with serial ports in the browser. ",
   "main": "index.js",
   "scripts": {
