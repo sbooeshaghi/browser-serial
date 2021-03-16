@@ -10,6 +10,12 @@
     "type": "git",
     "url": "git+https://github.com/sbooeshaghi/browser-serial.git"
   },
+  "keywords": [
+    "serial",
+    "serialport",
+    "browser",
+    "usb"
+  ],
   "author": "A. Sina Booeshaghi",
   "license": "MIT",
   "bugs": {
