@@ -2,9 +2,13 @@
   "name": "browser-serial",
   "version": "1.0.1",
   "description": "API for communicating with serial ports in the browser. ",
-  "main": "index.js",
+  "main": "dist/BrowserSerial.js",
+  "types": "dist/BrowserSerial.d.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "serve:dev": "webpack serve --config webpack.dev.js",
+    "build:dev": "tsc",
+    "build:dev-wp": "webpack --config webpack.dev.js"
   },
   "repository": {
     "type": "git",
@@ -21,5 +25,17 @@
   "bugs": {
     "url": "https://github.com/sbooeshaghi/browser-serial/issues"
   },
-  "homepage": "https://github.com/sbooeshaghi/browser-serial#readme"
+  "homepage": "https://github.com/sbooeshaghi/browser-serial#readme",
+  "devDependencies": {
+    "@types/w3c-web-serial": "^1.0.1",
+    "clean-webpack-plugin": "^3.0.0",
+    "html-loader": "^2.1.2",
+    "html-webpack-plugin": "^5.3.1",
+    "ts-loader": "^8.0.18",
+    "typescript": "^4.2.3",
+    "webpack": "^5.26.2",
+    "webpack-cli": "^4.5.0",
+    "webpack-dev-server": "^3.11.2",
+    "webpack-merge": "^5.7.3"
+  }
 }

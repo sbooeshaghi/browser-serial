@@ -1,47 +1,45 @@
-// enum ParityType {
-//     "none",
-//     "even",
-//     "odd"
-//   };
-
-//   enum FlowControlType {
-//     "none",
-//     "hardware"
-//   };
-
-//   dictionary SerialOptions {
-//     required [EnforceRange] unsigned long baudRate;
-//     [EnforceRange] octet dataBits = 8;
-//     [EnforceRange] octet stopBits = 1;
-//     ParityType parity = "none";
-//     [EnforceRange] unsigned long bufferSize = 255;
-//     FlowControlType flowControl = "none";
-//   };
-
 // notes:
 // done doesnt seem to ever be true?
 // want to be able to specify pipelines of decoders
 // ie linedecoder or just standard decoder
 
-export class Serial {
+
+const defaultSerialOptions: SerialOptions = {
+  baudRate: 115200,
+  dataBits: 8,
+  stopBits: 1,
+  parity: "none",
+  bufferSize: 255,
+  flowControl: "none",
+};
+
+const defaultSerialFilters: SerialPortRequestOptions = {};
+
+export class BrowserSerial {
+  serialOptions: SerialOptions
+  serialFilters: SerialPortRequestOptions
+  port: SerialPort | null
+  EOF: string
+  encoder: TextEncoderStream
+  decoder: TextDecoderStream
+  lineTransformer: TransformStream
+  writeToStream: WritableStream
+  readFromStream: ReadableStream
+  reader: ReadableStreamDefaultReader | null
+
+
   constructor(
-    serialOptions = {
-      baudRate: 115200,
-      dataBits: 8,
-      stopBits: 1,
-      parity: "none",
-      bufferSize: 255,
-      flowControl: "none",
-    },
-    serialFilters = {}
+    serialOptions = defaultSerialOptions,
+    serialFilters = defaultSerialFilters
   ) {
+
     this.serialOptions = serialOptions;
     this.serialFilters = serialFilters;
 
     this.EOF = "\n";
     this.port = null;
 
-    this.encoder = new TextEncoderStream("utf-8");
+    this.encoder = new TextEncoderStream();
     this.decoder = new TextDecoderStream("utf-8");
     this.lineTransformer = new TransformStream(new LineBreakTransformer());
 
@@ -53,27 +51,25 @@ export class Serial {
       this.EOF === "\n" ? this.lineTransformer.readable : this.decoder.readable;
 
     this.reader = null;
-    this.writer = null;
-
-    this.readFromPromise = null;
-    this.writeToPromise = null;
   }
-
-  async connect() {
+  
+  async connect(): Promise<void> {
     this.port = this.serialFilters
       ? await navigator.serial.requestPort(this.serialFilters)
       : await navigator.serial.requestPort();
+      
     await this.port.open(this.serialOptions);
 
     // connect the port stream to the in and out stream
     // this.readFromPromise = this.port.readable.pipeTo(this.decoder.writable);
-    this.readFromPromise = this.port.readable
+    this.port.readable
       .pipeThrough(this.decoder)
       .pipeThrough(this.lineTransformer);
-    this.writeToPromise = this.encoder.readable.pipeTo(this.port.writable);
+
+    this.encoder.readable.pipeTo(this.port.writable);
   }
 
-  async disconnect() {
+  async disconnect(): Promise<void> {
     if (this.reader) {
       // cancel the reader
       await this.reader.cancel();
@@ -94,7 +90,7 @@ export class Serial {
     this.port = null;
   }
 
-  async write(cmd) {
+  async write(cmd: string): Promise<void> {
     // spawn a new writer and lock to writeToStream
     const writer = this.writeToStream.getWriter();
     // write command and unlock
@@ -103,16 +99,16 @@ export class Serial {
   }
 
   // mayne this should be a generator?
-  async readLoop() {
+  async readLoop(): Promise<void> {
     // while we can read from the port
     while (this.port.readable) {
       // lock the reader to the port stream
-      const reader = this.readFromStream.getReader();
+      this.reader = this.readFromStream.getReader();
 
       try {
         while (true) {
           // await for values from the reader
-          const { done, value } = await reader.read();
+          const { done, value } = await this.reader.read();
           // if no more values, break
           // FYI done seems to always return false...
           console.log(value);
@@ -125,18 +121,19 @@ export class Serial {
         console.log("ERROR, ", e);
       } finally {
         console.log("unlocking reader");
-        reader.releaseLock();
+        this.reader.releaseLock();
       }
     }
   }
 
   // test out the generator
-  async *readLine() {
+  async *readLine(): AsyncGenerator<{value: any;done: boolean;}, void, unknown> 
+    {
     while (this.port.readable) {
-      const reader = this.readFromStream.getReader();
+      this.reader = this.readFromStream.getReader();
       try {
         while (true) {
-          const { value, done } = await reader.read();
+          const { value, done } = await this.reader.read();
           yield { value, done };
           if (done === true) {
             console.log("breaking!");
@@ -147,25 +144,31 @@ export class Serial {
         console.log("ERROR, ", e);
       } finally {
         console.log("unlocking reader");
-        reader.releaseLock();
+        this.reader.releaseLock();
       }
     }
   }
 }
 
 class LineBreakTransformer {
+  container: string 
+
   constructor() {
     this.container = "";
   }
 
-  transform(chunk, controller) {
+  transform(chunk: string, controller: TransformStreamDefaultController) {
     this.container += chunk;
     const lines = this.container.split("\r\n");
-    this.container = lines.pop();
+    let pop = lines.pop();
+    this.container = "";
+    if (pop){
+      this.container = pop;
+    }
     lines.forEach((line) => controller.enqueue(line));
   }
 
-  flush(controller) {
+  flush(controller: TransformStreamDefaultController) {
     controller.enqueue(this.container);
   }
 }
