@@ -14,3 +14,7 @@ Import the package
 import { BrowserSerial } from "browser-serial";
 const serial = new BrowserSerial();
 ```
+
+---
+
+This code was motivated by https://github.com/GoogleChromeLabs/serial-terminal
