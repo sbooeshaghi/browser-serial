@@ -6,9 +6,9 @@
   "types": "dist/BrowserSerial.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "serve:dev": "webpack serve --config webpack.dev.js",
+    "serve:dev": "webpack serve --config config/webpack.dev.js",
     "build:dev": "tsc",
-    "build:dev-wp": "webpack --config webpack.dev.js"
+    "build:dev-wp": "webpack --config config/webpack.dev.js"
   },
   "repository": {
     "type": "git",
