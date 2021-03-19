@@ -99,7 +99,7 @@ export class BrowserSerial {
   }
 
   // mayne this should be a generator?
-  async readLoop(): Promise<void> {
+  async readLoop(callable: (value: string, done: boolean) => void): Promise<void> {
     // while we can read from the port
     while (this.port.readable) {
       // lock the reader to the port stream
@@ -111,7 +111,7 @@ export class BrowserSerial {
           const { done, value } = await this.reader.read();
           // if no more values, break
           // FYI done seems to always return false...
-          console.log(value);
+          callable(value, done);
           if (done === true) {
             console.log("breaking");
             break;
