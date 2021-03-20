@@ -1,6 +1,18 @@
 # browser-serial
+[![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/dwyl/esta/issues)
 
-API for communicating with serial ports in the browser. This package is currently under active development. Contributions are more than welcomed!
+API for communicating with serial ports in the browser. This package is currently under active development and contributions are more than welcomed! 
+
+## About
+This API builds off of the [WICG Serial specification](https://wicg.github.io/serial/) that is currently in an "experimental" phase in Chromium browsers and must be enabled in your browser's Experimental Web Platform Features to use. Copy and paste the following URL to enable it in your browser:
+
+```
+chrome://flags/#enable-experimental-web-platform-features
+opera://flags/#enable-experimental-web-platform-features
+edge://flags/#enable-experimental-web-platform-features
+```
+
+To learn more about the status of this feature, see the [WebSerial API Chrome Platform Status](https://chromestatus.com/feature/6577673212002304).
 
 ## Installation
 
