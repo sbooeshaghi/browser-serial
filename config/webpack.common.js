@@ -3,9 +3,9 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 
 module.exports = {
-  entry: { main: path.resolve(__dirname, "./test/index.ts") },
+  entry: { main: path.resolve(__dirname, "../test/index.ts") },
   output: {
-    path: path.resolve(__dirname, "./test/dist"),
+    path: path.resolve(__dirname, "../test/dist"),
     filename: "index.js",
   },
   module: {
@@ -24,7 +24,7 @@ module.exports = {
   plugins: [
     new CleanWebpackPlugin(),
     new HtmlWebpackPlugin({
-      template: "test/index.html",
+      template: "./test/index.html",
     }),
   ],
   resolve: {

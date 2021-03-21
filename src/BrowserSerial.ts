@@ -69,6 +69,30 @@ export class BrowserSerial {
     this.encoder.readable.pipeTo(this.port.writable);
   }
 
+  
+  // async setupDecoder(){
+  //   this.decoder = new TextDecoderStream("utf-8");
+  //   this.lineTransformer = new TransformStream(new LineBreakTransformer());
+  //   // port writes to decoder.writable, i read from decoder.readable
+  //   this.readFromStream =
+  //     this.EOF === "\n" ? this.lineTransformer.readable : this.decoder.readable;
+  // }
+  // async setupEncoder() {
+  //   this.encoder = new TextEncoderStream();
+  //   // port reads from encoder.readable, i write to encoder.writable
+  //   this.writeToStream = this.encoder.writable;
+  // }
+  // async setupStreams() {
+  //   // connect the port stream to the in and out stream
+  //   // this.readFromPromise = this.port.readable.pipeTo(this.decoder.writable);
+  //   this.port.readable
+  //     .pipeThrough(this.decoder)
+  //     .pipeThrough(this.lineTransformer);
+
+  //   this.encoder.readable.pipeTo(this.port.writable);
+  // }
+  
+
   async disconnect(): Promise<void> {
     if (this.reader) {
       // cancel the reader
