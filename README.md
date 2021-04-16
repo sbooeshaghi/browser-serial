@@ -51,7 +51,7 @@ disconnectButton.addEventListener("click", () => serial.disconnect());
 serial.readLoop(console.log)
 
 // read data line by line as it comes in
-for await (let { value, done } of serial.readLine()) {
+for await (let { value, done } of serial.readLineGenerator()) {
   console.log(value)
   if (done === "true") {
     break;
