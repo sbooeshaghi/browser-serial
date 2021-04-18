@@ -1,5 +1,6 @@
 # browser-serial
 [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/dwyl/esta/issues)
+[![DOI](https://zenodo.org/badge/348448190.svg)](https://zenodo.org/badge/latestdoi/348448190)
 
 API for communicating with serial ports in the browser. This package is currently under active development and contributions are more than welcomed! 
 
@@ -50,7 +51,7 @@ disconnectButton.addEventListener("click", () => serial.disconnect());
 serial.readLoop(console.log)
 
 // read data line by line as it comes in
-for await (let { value, done } of serial.readLine()) {
+for await (let { value, done } of serial.readLineGenerator()) {
   console.log(value)
   if (done === "true") {
     break;
