@@ -28,11 +28,11 @@ export class BrowserSerial {
   readTransformers: Array<TextDecoderStream | TransformStream>;
 
   constructor(
-    serialOptions = defaultSerialOptions,
-    serialFilters = defaultSerialFilters
+    serialOptions?: SerialOptions,
+    serialFilters?: SerialPortRequestOptions
   ) {
-    this.serialOptions = serialOptions;
-    this.serialFilters = serialFilters;
+    this.serialOptions = { ...defaultSerialOptions, ...serialOptions };
+    this.serialFilters = { ...defaultSerialFilters, ...serialFilters };
 
     this.EOF = "\n";
     this.port = null;
@@ -104,7 +104,6 @@ export class BrowserSerial {
     writer.releaseLock();
   }
 
-  // mayne this should be a generator?
   async readLoop(
     callable: (value: string, done: boolean) => boolean
   ): Promise<void> {
@@ -140,13 +139,36 @@ export class BrowserSerial {
   }
 
   // assumes that the stream reads line by line
+  async readUntilLine(
+    until: string,
+    reader: ReadableStreamDefaultReader,
+    callable: (value: string, done: boolean) => void
+  ): Promise<void> {
+    try {
+      while (true) {
+        // await for values from the reader
+        let { done, value } = await reader.read();
+        // if no more values, break
+        // FYI done seems to always return false...
+        callable(value, done);
+        if (value === until) {
+          console.log("breaking");
+          break;
+        }
+      }
+    } catch (e) {
+      console.log("ERROR, ", e);
+    } finally {
+      reader.releaseLock();
+    }
+  }
+  // assumes that the stream reads line by line
   async readUntil(
     until: string,
     callable: (value: string, done: boolean) => void
   ): Promise<void> {
     // while we can read from the port
     while (this.port.readable) {
-      // lock the reader to the port stream until
       this.reader = this.readFromStream.getReader();
 
       try {
@@ -190,7 +212,6 @@ export class BrowserSerial {
     }
   }
 
-  // test out the generator
   async *readGenerator(): AsyncGenerator<
     { value: any; done: boolean },
     void,
@@ -213,6 +234,12 @@ export class BrowserSerial {
         console.log("unlocking reader");
         this.reader.releaseLock();
       }
+    }
+  }
+
+  getReader(): ReadableStreamDefaultReader | void {
+    if (this.port.readable) {
+      return this.readFromStream.getReader();
     }
   }
 
