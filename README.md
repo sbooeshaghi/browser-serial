@@ -1,5 +1,5 @@
 # browser-serial
-[![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/dwyl/esta/issues)
+[![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/sbooeshaghi/browser-serial/issues)
 [![DOI](https://zenodo.org/badge/348448190.svg)](https://zenodo.org/badge/latestdoi/348448190)
 
 API for communicating with serial ports in the browser. This package is currently under active development and contributions are more than welcomed! 
